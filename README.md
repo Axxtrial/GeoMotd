@@ -79,6 +79,21 @@ motds:
 
 ---
 
+## Placeholders (PlaceholderAPI)
+
+When [PlaceholderAPI](https://www.spigotmc.org/resources/placeholderapi.6245/) is installed on Paper/Spigot, the following placeholders are available:
+
+| Placeholder | Example Output | Description |
+| :--- | :--- | :--- |
+| `%geomotd_country%` | `Spain`, `Mexico`, `United States` | Player's full country name |
+| `%geomotd_country_code%` | `ES`, `MX`, `US` | Player's ISO-2 country code |
+| `%geomotd_language%` | `es`, `en`, `pt` | Player's resolved language |
+| `%geomotd_cache_size%` | `142` | Total cached IP addresses in RAM |
+| `%geomotd_cache_hit_rate%` | `99.85%` | RAM cache hit rate percentage |
+| `%geomotd_countries_count%` | `223` | Total mapped countries in database |
+
+---
+
 ## Building from Source
 
 Requires JDK 21 or higher and Maven:
