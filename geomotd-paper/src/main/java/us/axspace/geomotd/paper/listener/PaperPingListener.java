@@ -1,6 +1,7 @@
 package us.axspace.geomotd.paper.listener;
 
 import com.destroystokyo.paper.event.server.PaperServerListPingEvent;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -29,13 +30,20 @@ public class PaperPingListener implements Listener {
         event.motd(motd.getFullComponent());
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.LOWEST)
     public void onBukkitPing(ServerListPingEvent event) {
-        // Fallback for standard Bukkit if PaperServerListPingEvent isn't fired
+        // Crucial: PaperServerListPingEvent extends ServerListPingEvent!
+        // We must ignore Paper events here so we do NOT overwrite the Adventure Component with raw strings!
+        if (event instanceof PaperServerListPingEvent) {
+            return;
+        }
+
+        // Fallback for standard Spigot without Paper's Adventure ping event
         try {
             InetAddress address = event.getAddress();
             MOTDEntry motd = core.getMOTDEntryForAddress(address);
-            event.setMotd(motd.getRawLine1() + "\n" + motd.getRawLine2());
+            String legacy = LegacyComponentSerializer.legacySection().serialize(motd.getFullComponent());
+            event.setMotd(legacy);
         } catch (Exception ignored) {}
     }
 }
