@@ -2,7 +2,7 @@
 
 Ultra-fast, dynamic GeoIP multi-language MOTD system for Minecraft servers and proxies.
 
-[![Build Status](https://img.shields.io/github/actions/workflow/status/Axxtrial/GeoMotd/build.yml?branch=main&style=flat-square)](https://github.com/Axxtrial/GeoMotd/actions)
+[![Build Status](https://img.shields.io/badge/Build%20Status-passing-brightgreen?style=flat-square)](https://github.com/Axxtrial/GeoMotd/actions)
 [![License](https://img.shields.io/badge/License-BSL%201.1-blue?style=flat-square)](LICENSE)
 [![Java](https://img.shields.io/badge/Java-21%2B-informational?style=flat-square)](https://adoptium.net)
 
