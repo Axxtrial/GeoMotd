@@ -33,6 +33,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
+        <finalName>GeoMOTD-Bungee-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>

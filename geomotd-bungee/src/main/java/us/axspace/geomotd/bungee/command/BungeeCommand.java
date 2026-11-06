@@ -74,6 +74,9 @@ public class BungeeCommand extends Command implements TabExecutor {
     private void sendStatus(CommandSender sender, MessagesManager msg) {
         send(sender, msg.getComponent("commands.status.header"));
 
+        String versionStr = core.getVersionManager() != null ? core.getVersionManager().getStatusDisplay() : "1.0.0";
+        send(sender, msg.getComponent("commands.status.version", Collections.singletonMap("version", versionStr)));
+
         send(sender, msg.getComponent("commands.status.platform", Collections.singletonMap("platform", "BungeeCord / Waterfall")));
 
         boolean isLoaded = core.getGeoIPService().isLoaded();

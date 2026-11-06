@@ -20,6 +20,7 @@ commands:
 
   status:
     header: "<gradient:#FFD700:#FFA500><bold>=== GeoMOTD System Status ===</bold></gradient>"
+    version: "<gray>Plugin Version: <version></gray>"
     platform: "<gray>Platform: <aqua><platform></aqua></gray>"
     database-loaded: "<gray>GeoLite2 Database: <status></gray>"
     database-loaded-true: "<green>Loaded & Active</green>"

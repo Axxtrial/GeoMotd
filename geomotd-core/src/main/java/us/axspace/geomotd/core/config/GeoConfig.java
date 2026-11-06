@@ -36,6 +36,9 @@ public class GeoConfig {
     private int cacheMaxEntries = 50000;
     private int cacheExpireMinutes = 1440;
 
+    private boolean checkUpdates = true;
+    private boolean metricsEnabled = true;
+
     private final Map<String, List<MOTDEntry>> motdsByLanguage = new ConcurrentHashMap<>();
     private final MOTDEntry fallbackEntry = new MOTDEntry("<gradient:#00FFAA:#00AAFF><bold>Minecraft Server</bold></gradient>", "<yellow>Welcome to our server!</yellow>");
 
@@ -65,6 +68,8 @@ public class GeoConfig {
 
         this.defaultLanguage = getString(data, "default-language", "en").toLowerCase(Locale.ROOT);
         this.localLanguage = getString(data, "local-language", "en").toLowerCase(Locale.ROOT);
+        this.checkUpdates = getBoolean(data, "check-updates", true);
+        this.metricsEnabled = getBoolean(data, "metrics", true);
 
         Map<?, ?> dbSection = getSection(data, "database");
         this.databaseFile = getString(dbSection, "file", "GeoLite2-Country.mmdb");
@@ -227,5 +232,13 @@ public class GeoConfig {
 
     public Set<String> getConfiguredLanguages() {
         return Collections.unmodifiableSet(motdsByLanguage.keySet());
+    }
+
+    public boolean isCheckUpdates() {
+        return checkUpdates;
+    }
+
+    public boolean isMetricsEnabled() {
+        return metricsEnabled;
     }
 }

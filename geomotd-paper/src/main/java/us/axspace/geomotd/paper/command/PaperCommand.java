@@ -61,6 +61,9 @@ public class PaperCommand implements CommandExecutor, TabCompleter {
     private void sendStatus(CommandSender sender, MessagesManager msg) {
         sender.sendMessage(msg.getComponent("commands.status.header"));
 
+        String versionStr = core.getVersionManager() != null ? core.getVersionManager().getStatusDisplay() : "1.0.0";
+        sender.sendMessage(msg.getComponent("commands.status.version", Collections.singletonMap("version", versionStr)));
+
         Map<String, String> platformMap = Collections.singletonMap("platform", "Paper / Folia");
         sender.sendMessage(msg.getComponent("commands.status.platform", platformMap));
 

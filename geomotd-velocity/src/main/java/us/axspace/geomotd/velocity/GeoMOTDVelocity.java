@@ -46,7 +46,7 @@ public class GeoMOTDVelocity {
     public void onProxyInitialization(ProxyInitializeEvent event) {
         long startTime = System.currentTimeMillis();
 
-        this.core = new GeoMOTDCore(dataDirectory.toFile(), logger::info);
+        this.core = new GeoMOTDCore(dataDirectory.toFile(), "1.0.0", logger::info);
         this.core.init();
 
         MessagesManager messages = core.getMessages();

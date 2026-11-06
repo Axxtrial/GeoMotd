@@ -19,7 +19,7 @@ public class GeoMOTDPaper extends JavaPlugin {
     public void onEnable() {
         long startTime = System.currentTimeMillis();
 
-        this.core = new GeoMOTDCore(getDataFolder(), msg -> getLogger().info(msg));
+        this.core = new GeoMOTDCore(getDataFolder(), getDescription().getVersion(), msg -> getLogger().info(msg));
         this.core.init();
 
         MessagesManager messages = core.getMessages();
@@ -36,13 +36,15 @@ public class GeoMOTDPaper extends JavaPlugin {
             cmd.setTabCompleter(paperCmd);
         }
 
-        // bStats Metrics
-        int pluginId = 35172;
-        try {
-            org.bstats.bukkit.Metrics metrics = new org.bstats.bukkit.Metrics(this, pluginId);
-            metrics.addCustomChart(new org.bstats.charts.SimplePie("default_language", () -> core.getConfig().getDefaultLanguage()));
-            metrics.addCustomChart(new org.bstats.charts.SimplePie("auto_update_countries", () -> core.getConfig().isCountriesAutoUpdate() ? "Enabled" : "Disabled"));
-        } catch (Exception ignored) {}
+        // bStats Metrics (can be disabled in config.yml)
+        if (core.getConfig().isMetricsEnabled()) {
+            int pluginId = 35172;
+            try {
+                org.bstats.bukkit.Metrics metrics = new org.bstats.bukkit.Metrics(this, pluginId);
+                metrics.addCustomChart(new org.bstats.charts.SimplePie("default_language", () -> core.getConfig().getDefaultLanguage()));
+                metrics.addCustomChart(new org.bstats.charts.SimplePie("auto_update_countries", () -> core.getConfig().isCountriesAutoUpdate() ? "Enabled" : "Disabled"));
+            } catch (Exception ignored) {}
+        }
 
         long elapsed = System.currentTimeMillis() - startTime;
         getLogger().info(messages.getLog("logs.plugin-enabled", elapsed));

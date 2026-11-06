@@ -10,6 +10,13 @@ default-language: "en"
 # Language used for localhost / LAN / private IPs (127.0.0.1, 192.168.x.x, etc.)
 local-language: "en"
 
+# Asynchronously check GitHub Releases for new plugin updates
+check-updates: true
+
+# Enable anonymous metrics collection via bStats (ID: 35172)
+# Helps the author track plugin adoption and popular default languages.
+metrics: true
+
 # Database Configuration
 database:
   # The database file name in the plugin folder

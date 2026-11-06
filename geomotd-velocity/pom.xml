@@ -33,6 +33,7 @@
 
     <build>
         <defaultGoal>clean package</defaultGoal>
+        <finalName>GeoMOTD-Velocity-${project.version}</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

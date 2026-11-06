@@ -18,7 +18,7 @@ public class GeoMOTDBungee extends Plugin {
     public void onEnable() {
         long startTime = System.currentTimeMillis();
 
-        this.core = new GeoMOTDCore(getDataFolder(), msg -> getLogger().info(msg));
+        this.core = new GeoMOTDCore(getDataFolder(), getDescription().getVersion(), msg -> getLogger().info(msg));
         this.core.init();
 
         MessagesManager messages = core.getMessages();

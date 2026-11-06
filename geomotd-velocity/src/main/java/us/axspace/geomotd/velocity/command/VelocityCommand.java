@@ -54,6 +54,9 @@ public class VelocityCommand implements SimpleCommand {
     private void sendStatus(CommandSource source, MessagesManager msg) {
         source.sendMessage(msg.getComponent("commands.status.header"));
 
+        String versionStr = core.getVersionManager() != null ? core.getVersionManager().getStatusDisplay() : "1.0.0";
+        source.sendMessage(msg.getComponent("commands.status.version", Collections.singletonMap("version", versionStr)));
+
         source.sendMessage(msg.getComponent("commands.status.platform", Collections.singletonMap("platform", "Velocity Proxy")));
 
         boolean isLoaded = core.getGeoIPService().isLoaded();

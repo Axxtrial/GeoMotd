@@ -8,6 +8,8 @@ import us.axspace.geomotd.core.geoip.CountryLanguageManager;
 import us.axspace.geomotd.core.geoip.GeoIPService;
 import us.axspace.geomotd.core.geoip.GeoLookupResult;
 
+import us.axspace.geomotd.core.version.VersionManager;
+
 import java.io.File;
 import java.net.InetAddress;
 import java.util.concurrent.CompletableFuture;
@@ -21,15 +23,22 @@ import java.util.function.Consumer;
 public class GeoMOTDCore {
 
     private final File dataFolder;
+    private final String currentVersion;
     private final Consumer<String> logger;
 
     private MessagesManager messages;
     private GeoConfig config;
     private CountryLanguageManager countryManager;
     private GeoIPService geoIPService;
+    private VersionManager versionManager;
 
     public GeoMOTDCore(File dataFolder, Consumer<String> logger) {
+        this(dataFolder, "1.0.0", logger);
+    }
+
+    public GeoMOTDCore(File dataFolder, String currentVersion, Consumer<String> logger) {
         this.dataFolder = dataFolder;
+        this.currentVersion = currentVersion != null ? currentVersion : "1.0.0";
         this.logger = logger != null ? logger : (msg) -> {};
     }
 
@@ -60,6 +69,11 @@ public class GeoMOTDCore {
                 logger
         );
         this.geoIPService.init();
+
+        this.versionManager = new VersionManager(currentVersion, "Axxtrial/GeoMotd", messages, logger);
+        if (config.isCheckUpdates()) {
+            this.versionManager.checkForUpdatesAsync(null);
+        }
 
         logger.accept(messages.getLog("logs.core-initialized"));
     }
@@ -141,5 +155,9 @@ public class GeoMOTDCore {
 
     public GeoIPService getGeoIPService() {
         return geoIPService;
+    }
+
+    public VersionManager getVersionManager() {
+        return versionManager;
     }
 }
