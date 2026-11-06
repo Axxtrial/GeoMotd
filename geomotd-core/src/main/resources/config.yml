@@ -56,32 +56,41 @@ cache:
   # Time in minutes before an IP location cache expires (24 hours = 1440 min)
   expire-minutes: 1440
 
-# MOTD Definitions by Language code (en, es, pt, fr, de, etc.)
-# Minecraft server lists display exactly 2 lines (line1 and line2).
+# ========================================================
+#                    MOTD Definitions
+# ========================================================
+# Minecraft multiplayer server lists display exactly 2 lines (line1 & line2).
 # Supports full MiniMessage tags: <gradient:#hex:#hex>, <rainbow>, <bold>, <color:#hex>, <reset>
 #
-# Random Rotation:
-# You can define multiple entries per language with '-' and one will be chosen at random on each ping.
-# (If you only want a single fixed MOTD, simply leave 1 entry with line1 and line2).
+# RANDOM ROTATION (Optional):
+# You can define multiple MOTDs per language using '-' list items.
+# Every time a player refreshes their server list, one will be chosen at random.
+# If you only want a single permanent MOTD, simply leave 1 MOTD (as shown in the 'pt' section below).
 #
-# Custom Icon Override (Optional):
-# You can optionally specify 'icon: "icons/custom.png"' inside an entry if you want
-# that specific MOTD to override the language icon.
+# CUSTOM ICON OVERRIDE (Optional):
+# By default, the icon defined in 'icons.languages' above is used automatically.
+# However, you can optionally add 'icon: "icons/custom.png"' to any MOTD entry
+# if you want that specific MOTD (e.g. for maintenance or events) to display a different icon.
 motds:
   en:
+    # --- MOTD 1 (Default) ---
     - line1: "<gradient:#00FFAA:#00AAFF><bold>Minecraft Server</bold></gradient> <dark_gray>●</dark_gray> <gray>1.21 - 1.26</gray>"
       line2: "<yellow>Welcome to our multiplayer community!</yellow>"
+
+    # --- MOTD 2 (Optional - Cycles randomly on player refresh) ---
     - line1: "<gradient:#FFAA00:#FF5555><bold>Survival & Adventure</bold></gradient> <dark_gray>●</dark_gray> <green>Online</green>"
       line2: "<white>Explore, build, and survive with friends!</white>"
 
   es:
+    # --- MOTD 1 (Predeterminado) ---
     - line1: "<gradient:#00FFAA:#00AAFF><bold>Servidor de Minecraft</bold></gradient> <dark_gray>●</dark_gray> <gray>1.21 - 1.26</gray>"
       line2: "<yellow>¡Bienvenido a nuestra comunidad multijugador!</yellow>"
+
+    # --- MOTD 2 (Opcional - Rota aleatoriamente al refrescar lista) ---
     - line1: "<gradient:#FFAA00:#FF5555><bold>Supervivencia y Aventura</bold></gradient> <dark_gray>●</dark_gray> <green>En línea</green>"
       line2: "<white>¡Explora, construye y sobrevive con amigos!</white>"
 
   pt:
+    # --- MOTD 1 Único (Fijo, sin rotación) ---
     - line1: "<gradient:#00FFAA:#00AAFF><bold>Servidor de Minecraft</bold></gradient> <dark_gray>●</dark_gray> <gray>1.21 - 1.26</gray>"
       line2: "<yellow>Bem-vindo à nossa comunidade multijugador!</yellow>"
-    - line1: "<gradient:#FFAA00:#FF5555><bold>Sobrevivência e Aventura</bold></gradient> <dark_gray>●</dark_gray> <green>Online</green>"
-      line2: "<white>Explore, construa e sobreviva com amigos!</white>"
