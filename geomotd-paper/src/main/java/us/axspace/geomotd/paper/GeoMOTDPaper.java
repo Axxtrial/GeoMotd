@@ -46,6 +46,12 @@ public class GeoMOTDPaper extends JavaPlugin {
             } catch (Exception ignored) {}
         }
 
+        // Hook into PlaceholderAPI if present
+        if (getServer().getPluginManager().getPlugin("PlaceholderAPI") != null) {
+            new us.axspace.geomotd.paper.placeholder.GeoMOTDExpansion(core, getDescription().getVersion()).register();
+            getLogger().info("Hooked into PlaceholderAPI successfully!");
+        }
+
         long elapsed = System.currentTimeMillis() - startTime;
         getLogger().info(messages.getLog("logs.plugin-enabled", elapsed));
     }
