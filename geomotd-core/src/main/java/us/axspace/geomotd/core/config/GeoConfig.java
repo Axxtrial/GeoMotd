@@ -39,8 +39,12 @@ public class GeoConfig {
     private boolean checkUpdates = true;
     private boolean metricsEnabled = true;
 
+    private boolean iconsEnabled = true;
+    private String defaultIcon = "icons/default.png";
+    private final Map<String, String> iconsByLanguage = new ConcurrentHashMap<>();
+
     private final Map<String, List<MOTDEntry>> motdsByLanguage = new ConcurrentHashMap<>();
-    private final MOTDEntry fallbackEntry = new MOTDEntry("<gradient:#00FFAA:#00AAFF><bold>Minecraft Server</bold></gradient>", "<yellow>Welcome to our server!</yellow>");
+    private final MOTDEntry fallbackEntry = new MOTDEntry("<gradient:#00FFAA:#00AAFF><bold>Minecraft Server</bold></gradient>", "<yellow>Welcome to our server!</yellow>", "icons/default.png");
 
     public GeoConfig(File dataFolder, MessagesManager messages, Consumer<String> logger) {
         this.dataFolder = dataFolder;
@@ -53,6 +57,7 @@ public class GeoConfig {
         if (!configFile.exists()) {
             exportDefaultConfig();
         }
+        exportDefaultIcons();
 
         Yaml yaml = new Yaml();
         Map<String, Object> data = null;
@@ -70,6 +75,19 @@ public class GeoConfig {
         this.localLanguage = getString(data, "local-language", "en").toLowerCase(Locale.ROOT);
         this.checkUpdates = getBoolean(data, "check-updates", true);
         this.metricsEnabled = getBoolean(data, "metrics", true);
+
+        Map<?, ?> iconsSection = getSection(data, "icons");
+        this.iconsEnabled = getBoolean(iconsSection, "enabled", true);
+        this.defaultIcon = getString(iconsSection, "default", "icons/default.png");
+        this.iconsByLanguage.clear();
+        Map<?, ?> langIcons = getSection(iconsSection, "languages");
+        if (langIcons != null) {
+            for (Map.Entry<?, ?> e : langIcons.entrySet()) {
+                if (e.getKey() != null && e.getValue() != null) {
+                    this.iconsByLanguage.put(e.getKey().toString().toLowerCase(Locale.ROOT), e.getValue().toString());
+                }
+            }
+        }
 
         Map<?, ?> dbSection = getSection(data, "database");
         this.databaseFile = getString(dbSection, "file", "GeoLite2-Country.mmdb");
@@ -99,9 +117,11 @@ public class GeoConfig {
                         if (item instanceof Map<?, ?> map) {
                             Object o1 = map.get("line1");
                             Object o2 = map.get("line2");
+                            Object oIcon = map.get("icon");
                             String l1 = o1 != null ? o1.toString() : "";
                             String l2 = o2 != null ? o2.toString() : "";
-                            list.add(new MOTDEntry(l1, l2));
+                            String icon = oIcon != null ? oIcon.toString() : null;
+                            list.add(new MOTDEntry(l1, l2, icon));
                         }
                     }
                 }
@@ -240,5 +260,80 @@ public class GeoConfig {
 
     public boolean isMetricsEnabled() {
         return metricsEnabled;
+    }
+
+    public boolean isIconsEnabled() {
+        return iconsEnabled;
+    }
+
+    public String getDefaultIcon() {
+        return defaultIcon;
+    }
+
+    public Map<String, String> getIconsByLanguage() {
+        return Collections.unmodifiableMap(iconsByLanguage);
+    }
+
+    public String resolveIconPath(MOTDEntry entry, String language) {
+        if (!iconsEnabled) {
+            return null;
+        }
+        if (entry != null && entry.getIconPath() != null) {
+            return entry.getIconPath();
+        }
+        if (language != null) {
+            String langIcon = iconsByLanguage.get(language.toLowerCase(Locale.ROOT));
+            if (langIcon != null) {
+                return langIcon;
+            }
+        }
+        if (defaultLanguage != null) {
+            String defLangIcon = iconsByLanguage.get(defaultLanguage.toLowerCase(Locale.ROOT));
+            if (defLangIcon != null) {
+                return defLangIcon;
+            }
+        }
+        return defaultIcon;
+    }
+
+    public Set<String> getAllReferencedIconPaths() {
+        Set<String> paths = new HashSet<>();
+        if (defaultIcon != null) paths.add(defaultIcon);
+        paths.addAll(iconsByLanguage.values());
+        for (List<MOTDEntry> entries : motdsByLanguage.values()) {
+            for (MOTDEntry entry : entries) {
+                if (entry.getIconPath() != null) {
+                    paths.add(entry.getIconPath());
+                }
+            }
+        }
+        File iconsDir = new File(dataFolder, "icons");
+        if (iconsDir.isDirectory()) {
+            File[] files = iconsDir.listFiles((dir, name) -> name.toLowerCase(Locale.ROOT).endsWith(".png"));
+            if (files != null) {
+                for (File f : files) {
+                    paths.add("icons/" + f.getName());
+                }
+            }
+        }
+        return paths;
+    }
+
+    private void exportDefaultIcons() {
+        File iconsDir = new File(dataFolder, "icons");
+        if (!iconsDir.exists()) {
+            iconsDir.mkdirs();
+        }
+        String[] defaultIcons = {"default.png", "icon_en.png", "icon_es.png", "icon_pt.png"};
+        for (String iconName : defaultIcons) {
+            File target = new File(iconsDir, iconName);
+            if (!target.exists()) {
+                try (InputStream in = getClass().getResourceAsStream("/icons/" + iconName)) {
+                    if (in != null) {
+                        Files.copy(in, target.toPath());
+                    }
+                } catch (Exception ignored) {}
+            }
+        }
     }
 }

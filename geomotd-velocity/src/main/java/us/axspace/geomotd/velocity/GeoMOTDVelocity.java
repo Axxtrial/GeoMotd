@@ -13,6 +13,7 @@ import org.slf4j.Logger;
 import us.axspace.geomotd.core.GeoMOTDCore;
 import us.axspace.geomotd.core.config.MessagesManager;
 import us.axspace.geomotd.velocity.command.VelocityCommand;
+import us.axspace.geomotd.velocity.icon.VelocityIconManager;
 import us.axspace.geomotd.velocity.listener.VelocityPingListener;
 
 import java.nio.file.Path;
@@ -34,6 +35,7 @@ public class GeoMOTDVelocity {
     private final Logger logger;
     private final Path dataDirectory;
     private GeoMOTDCore core;
+    private VelocityIconManager iconManager;
 
     @Inject
     public GeoMOTDVelocity(ProxyServer server, Logger logger, @DataDirectory Path dataDirectory) {
@@ -49,11 +51,15 @@ public class GeoMOTDVelocity {
         this.core = new GeoMOTDCore(dataDirectory.toFile(), "1.0.0", logger::info);
         this.core.init();
 
+        this.iconManager = new VelocityIconManager(dataDirectory.toFile(), core, logger::info);
+        this.iconManager.reload();
+        this.core.registerReloadHook(iconManager::reload);
+
         MessagesManager messages = core.getMessages();
         logger.info(messages.getLog("logs.plugin-enabling", "Velocity Proxy"));
 
         // Register ping listener
-        server.getEventManager().register(this, new VelocityPingListener(core));
+        server.getEventManager().register(this, new VelocityPingListener(core, iconManager));
 
         // Register command
         CommandManager commandManager = server.getCommandManager();

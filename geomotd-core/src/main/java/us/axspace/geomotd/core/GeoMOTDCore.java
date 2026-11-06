@@ -12,7 +12,9 @@ import us.axspace.geomotd.core.version.VersionManager;
 
 import java.io.File;
 import java.net.InetAddress;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.Consumer;
 
 /**
@@ -25,6 +27,7 @@ public class GeoMOTDCore {
     private final File dataFolder;
     private final String currentVersion;
     private final Consumer<String> logger;
+    private final List<Runnable> reloadHooks = new CopyOnWriteArrayList<>();
 
     private MessagesManager messages;
     private GeoConfig config;
@@ -88,6 +91,11 @@ public class GeoMOTDCore {
         return config.getMOTD(result.language());
     }
 
+    public String getLanguageForAddress(InetAddress address) {
+        GeoLookupResult result = lookup(address);
+        return result != null ? result.language() : config.getDefaultLanguage();
+    }
+
     public Component getComponentForAddress(InetAddress address) {
         return getMOTDEntryForAddress(address).getFullComponent();
     }
@@ -110,6 +118,12 @@ public class GeoMOTDCore {
         );
     }
 
+    public void registerReloadHook(Runnable hook) {
+        if (hook != null) {
+            reloadHooks.add(hook);
+        }
+    }
+
     public synchronized void reload() {
         if (messages != null) {
             messages.load();
@@ -123,6 +137,13 @@ public class GeoMOTDCore {
         if (geoIPService != null) {
             geoIPService.clearCache();
             geoIPService.initCache(config.getCacheMaxEntries(), config.getCacheExpireMinutes());
+        }
+        for (Runnable hook : reloadHooks) {
+            try {
+                hook.run();
+            } catch (Exception e) {
+                logger.accept("Error executing reload hook: " + e.getMessage());
+            }
         }
     }
 

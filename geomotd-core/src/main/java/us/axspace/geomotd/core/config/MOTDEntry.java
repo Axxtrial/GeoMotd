@@ -10,13 +10,19 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 public class MOTDEntry {
     private final String rawLine1;
     private final String rawLine2;
+    private final String iconPath;
     private final Component line1Component;
     private final Component line2Component;
     private final Component fullComponent;
 
     public MOTDEntry(String rawLine1, String rawLine2) {
+        this(rawLine1, rawLine2, null);
+    }
+
+    public MOTDEntry(String rawLine1, String rawLine2, String iconPath) {
         this.rawLine1 = rawLine1 != null ? rawLine1 : "";
         this.rawLine2 = rawLine2 != null ? rawLine2 : "";
+        this.iconPath = (iconPath != null && !iconPath.trim().isEmpty()) ? iconPath.trim() : null;
         MiniMessage mm = MiniMessage.miniMessage();
         this.line1Component = mm.deserialize(this.rawLine1);
         this.line2Component = mm.deserialize(this.rawLine2);
@@ -33,6 +39,10 @@ public class MOTDEntry {
 
     public String getRawLine2() {
         return rawLine2;
+    }
+
+    public String getIconPath() {
+        return iconPath;
     }
 
     public Component getLine1Component() {

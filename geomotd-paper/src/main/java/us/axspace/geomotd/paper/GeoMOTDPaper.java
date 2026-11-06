@@ -5,6 +5,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import us.axspace.geomotd.core.GeoMOTDCore;
 import us.axspace.geomotd.core.config.MessagesManager;
 import us.axspace.geomotd.paper.command.PaperCommand;
+import us.axspace.geomotd.paper.icon.PaperIconManager;
 import us.axspace.geomotd.paper.listener.PaperPingListener;
 
 /**
@@ -14,6 +15,7 @@ import us.axspace.geomotd.paper.listener.PaperPingListener;
 public class GeoMOTDPaper extends JavaPlugin {
 
     private GeoMOTDCore core;
+    private PaperIconManager iconManager;
 
     @Override
     public void onEnable() {
@@ -22,11 +24,15 @@ public class GeoMOTDPaper extends JavaPlugin {
         this.core = new GeoMOTDCore(getDataFolder(), getDescription().getVersion(), msg -> getLogger().info(msg));
         this.core.init();
 
+        this.iconManager = new PaperIconManager(getDataFolder(), core, msg -> getLogger().info(msg));
+        this.iconManager.reload();
+        this.core.registerReloadHook(iconManager::reload);
+
         MessagesManager messages = core.getMessages();
         getLogger().info(messages.getLog("logs.plugin-enabling", "Paper / Folia"));
 
         // Register ping listener
-        getServer().getPluginManager().registerEvents(new PaperPingListener(core), this);
+        getServer().getPluginManager().registerEvents(new PaperPingListener(core, iconManager), this);
 
         // Register command
         PluginCommand cmd = getCommand("geomotd");

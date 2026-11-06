@@ -17,6 +17,22 @@ check-updates: true
 # Helps the author track plugin adoption and popular default languages.
 metrics: true
 
+# Server Icons (Favicons) Settings
+# Minecraft requires 64x64 PNG images.
+# GeoMOTD can dynamically display different server icons based on
+# the player's language, country, or per-MOTD entry!
+# Place your icons in the 'icons/' folder inside the GeoMOTD plugin directory.
+icons:
+  # Enable dynamic server icon switching
+  enabled: true
+  # Fallback default icon if no specific language icon matches
+  default: "icons/default.png"
+  # Default icons by language code (en, es, pt, etc.)
+  languages:
+    en: "icons/icon_en.png"
+    es: "icons/icon_es.png"
+    pt: "icons/icon_pt.png"
+
 # Database Configuration
 database:
   # The database file name in the plugin folder
@@ -45,21 +61,28 @@ cache:
 # MOTD Definitions by Language code (en, es, pt, fr, de, etc.)
 # Supports full MiniMessage tags: <gradient:#hex:#hex>, <rainbow>, <bold>, <color:#hex>, <reset>
 # You can define multiple entries per language; one will be chosen at random.
+# Optionally, specify 'icon: "icons/my_icon.png"' to use a specific icon for an entry.
 motds:
   en:
     - line1: "<gradient:#00FFAA:#00AAFF><bold>Minecraft Server</bold></gradient> <dark_gray>●</dark_gray> <gray>1.21 - 1.26</gray>"
       line2: "<yellow>Welcome to our multiplayer community!</yellow>"
+      icon: "icons/icon_en.png"
     - line1: "<gradient:#FFAA00:#FF5555><bold>Survival & Adventure</bold></gradient> <dark_gray>●</dark_gray> <green>Online</green>"
       line2: "<white>Explore, build, and survive with friends!</white>"
+      icon: "icons/icon_en.png"
 
   es:
     - line1: "<gradient:#00FFAA:#00AAFF><bold>Servidor de Minecraft</bold></gradient> <dark_gray>●</dark_gray> <gray>1.21 - 1.26</gray>"
       line2: "<yellow>¡Bienvenido a nuestra comunidad multijugador!</yellow>"
+      icon: "icons/icon_es.png"
     - line1: "<gradient:#FFAA00:#FF5555><bold>Supervivencia y Aventura</bold></gradient> <dark_gray>●</dark_gray> <green>En línea</green>"
       line2: "<white>¡Explora, construye y sobrevive con amigos!</white>"
+      icon: "icons/icon_es.png"
 
   pt:
     - line1: "<gradient:#00FFAA:#00AAFF><bold>Servidor de Minecraft</bold></gradient> <dark_gray>●</dark_gray> <gray>1.21 - 1.26</gray>"
-      line2: "<yellow>Bem-vindo à nossa comunidade multijogador!</yellow>"
+      line2: "<yellow>Bem-vindo à nossa comunidade multijugador!</yellow>"
+      icon: "icons/icon_pt.png"
     - line1: "<gradient:#FFAA00:#FF5555><bold>Sobrevivência e Aventura</bold></gradient> <dark_gray>●</dark_gray> <green>Online</green>"
       line2: "<white>Explore, construa e sobreviva com amigos!</white>"
+      icon: "icons/icon_pt.png"

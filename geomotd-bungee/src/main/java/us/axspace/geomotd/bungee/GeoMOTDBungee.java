@@ -2,6 +2,7 @@ package us.axspace.geomotd.bungee;
 
 import net.md_5.bungee.api.plugin.Plugin;
 import us.axspace.geomotd.bungee.command.BungeeCommand;
+import us.axspace.geomotd.bungee.icon.BungeeIconManager;
 import us.axspace.geomotd.bungee.listener.BungeePingListener;
 import us.axspace.geomotd.core.GeoMOTDCore;
 import us.axspace.geomotd.core.config.MessagesManager;
@@ -13,6 +14,7 @@ import us.axspace.geomotd.core.config.MessagesManager;
 public class GeoMOTDBungee extends Plugin {
 
     private GeoMOTDCore core;
+    private BungeeIconManager iconManager;
 
     @Override
     public void onEnable() {
@@ -21,11 +23,15 @@ public class GeoMOTDBungee extends Plugin {
         this.core = new GeoMOTDCore(getDataFolder(), getDescription().getVersion(), msg -> getLogger().info(msg));
         this.core.init();
 
+        this.iconManager = new BungeeIconManager(getDataFolder(), core, msg -> getLogger().info(msg));
+        this.iconManager.reload();
+        this.core.registerReloadHook(iconManager::reload);
+
         MessagesManager messages = core.getMessages();
         getLogger().info(messages.getLog("logs.plugin-enabling", "BungeeCord / Waterfall"));
 
         // Register ping listener
-        getProxy().getPluginManager().registerListener(this, new BungeePingListener(core));
+        getProxy().getPluginManager().registerListener(this, new BungeePingListener(core, iconManager));
 
         // Register command
         getProxy().getPluginManager().registerCommand(this, new BungeeCommand(core));
