@@ -1,0 +1,51 @@
+# ========================================================
+#                    GeoMOTD Messages
+#             Developed for axspace.us/geomotd
+# ========================================================
+
+prefix: "<gradient:#FFD700:#FFA500><bold>GeoMOTD</bold></gradient> <dark_gray>»</dark_gray> "
+
+general:
+  no-permission: "<red>You do not have permission to execute this command.</red>"
+  unknown-command: "<red>Unknown sub-command. Type <yellow>/geomotd</yellow> for available commands.</red>"
+
+commands:
+  help:
+    header: "<gradient:#FFD700:#FFA500><bold>GeoMOTD Commands</bold></gradient> <dark_gray>(axspace.us/geomotd)</dark_gray>"
+    reload: "<yellow>/geomotd reload</yellow> <gray>- Reloads configuration, messages, and country database</gray>"
+    status: "<yellow>/geomotd status</yellow> <gray>- Displays system status, cache metrics, and mappings</gray>"
+
+  reload:
+    success: "<green>Configuration, messages, countries, and cache reloaded successfully!</green>"
+
+  status:
+    header: "<gradient:#FFD700:#FFA500><bold>=== GeoMOTD System Status ===</bold></gradient>"
+    platform: "<gray>Platform: <aqua><platform></aqua></gray>"
+    database-loaded: "<gray>GeoLite2 Database: <status></gray>"
+    database-loaded-true: "<green>Loaded & Active</green>"
+    database-loaded-false: "<red>Not loaded (check .mmdb file)</red>"
+    countries-count: "<gray>Mapped Countries: <green><count></green></gray>"
+    configured-languages: "<gray>Configured Languages: <gold><languages></gold></gray>"
+    default-language: "<gray>Default Fallback Language: <white><language></white></gray>"
+    cache-size: "<gray>Cached IP Addresses: <aqua><size></aqua></gray>"
+    cache-hit-rate: "<gray>RAM Cache Hit Rate: <green><rate></green></gray>"
+
+logs:
+  plugin-enabling: "Enabling GeoMOTD ({0})..."
+  plugin-enabled: "GeoMOTD enabled successfully in {0} ms!"
+  plugin-disabled: "GeoMOTD disabled."
+  core-initialized: "GeoMOTD Core engine initialized successfully."
+  countries-loaded-file: "Loaded {0} countries from countries.json."
+  countries-loaded-internal: "Loaded {0} countries from internal fallback."
+  countries-exported: "Exported default countries.json successfully to {0}."
+  db-found-root: "Found local GeoLite2 database in server root. Copying..."
+  db-downloading: "GeoLite2 database not found. Downloading automatically..."
+  db-download-success: "GeoLite2 database downloaded successfully ({0} MB)."
+  db-download-failed: "ERROR: Could not download GeoLite2 database. Please place it manually in {0}."
+  db-missing: "WARNING: GeoLite2 database missing. GeoIP detection will fall back to default language."
+  db-loaded: "GeoLite2 database loaded into memory successfully (CHMCache active)."
+  db-load-error: "Error opening GeoLite2 database: {0}"
+  config-loaded: "Configuration loaded. Configured languages: {0}"
+  config-default-exported: "Default config.yml created."
+  messages-loaded: "Messages loaded from messages.yml."
+  messages-default-exported: "Default messages.yml created."

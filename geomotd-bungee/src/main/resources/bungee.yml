@@ -1,0 +1,5 @@
+name: GeoMOTD
+version: 1.0.0
+main: us.axspace.geomotd.bungee.GeoMOTDBungee
+author: axxtrial
+description: Ultra-fast GeoIP Multi-Language MOTD for BungeeCord and Waterfall

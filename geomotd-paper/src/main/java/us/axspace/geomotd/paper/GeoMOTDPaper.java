@@ -1,0 +1,65 @@
+package us.axspace.geomotd.paper;
+
+import org.bukkit.command.PluginCommand;
+import org.bukkit.plugin.java.JavaPlugin;
+import us.axspace.geomotd.core.GeoMOTDCore;
+import us.axspace.geomotd.core.config.MessagesManager;
+import us.axspace.geomotd.paper.command.PaperCommand;
+import us.axspace.geomotd.paper.listener.PaperPingListener;
+
+/**
+ * Main plugin class for Paper and Folia.
+ * Developed for axspace.us/geomotd
+ */
+public class GeoMOTDPaper extends JavaPlugin {
+
+    private GeoMOTDCore core;
+
+    @Override
+    public void onEnable() {
+        long startTime = System.currentTimeMillis();
+
+        this.core = new GeoMOTDCore(getDataFolder(), msg -> getLogger().info(msg));
+        this.core.init();
+
+        MessagesManager messages = core.getMessages();
+        getLogger().info(messages.getLog("logs.plugin-enabling", "Paper / Folia"));
+
+        // Register ping listener
+        getServer().getPluginManager().registerEvents(new PaperPingListener(core), this);
+
+        // Register command
+        PluginCommand cmd = getCommand("geomotd");
+        if (cmd != null) {
+            PaperCommand paperCmd = new PaperCommand(core);
+            cmd.setExecutor(paperCmd);
+            cmd.setTabCompleter(paperCmd);
+        }
+
+        // bStats Metrics
+        int pluginId = 35172;
+        try {
+            org.bstats.bukkit.Metrics metrics = new org.bstats.bukkit.Metrics(this, pluginId);
+            metrics.addCustomChart(new org.bstats.charts.SimplePie("default_language", () -> core.getConfig().getDefaultLanguage()));
+            metrics.addCustomChart(new org.bstats.charts.SimplePie("auto_update_countries", () -> core.getConfig().isCountriesAutoUpdate() ? "Enabled" : "Disabled"));
+        } catch (Exception ignored) {}
+
+        long elapsed = System.currentTimeMillis() - startTime;
+        getLogger().info(messages.getLog("logs.plugin-enabled", elapsed));
+    }
+
+    @Override
+    public void onDisable() {
+        if (core != null) {
+            MessagesManager messages = core.getMessages();
+            if (messages != null) {
+                getLogger().info(messages.getLog("logs.plugin-disabled"));
+            }
+            core.shutdown();
+        }
+    }
+
+    public GeoMOTDCore getCore() {
+        return core;
+    }
+}

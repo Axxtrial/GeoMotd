@@ -1,0 +1,24 @@
+# Maven build outputs
+target/
+*.jar
+*.war
+*.ear
+
+# IDE & Editor files
+.idea/
+*.iml
+.vscode/
+.settings/
+.project
+.classpath
+
+# OS generated files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Temp / local database files
+*.log
+*.tmp
+ping_test.py
+GeoLite2-Country.mmdb
