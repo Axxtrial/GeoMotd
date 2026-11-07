@@ -1,4 +1,4 @@
-name: Build & Package GeoMOTD
+name: Build & Auto-Publish GeoMOTD
 
 on:
   push:
@@ -13,7 +13,7 @@ permissions:
 
 jobs:
   build:
-    name: Build Multiplatform JARs
+    name: Build & Publish Multiplatform
     runs-on: ubuntu-latest
 
     steps:
@@ -30,24 +30,39 @@ jobs:
       - name: Build with Maven
         run: mvn -B clean package --file pom.xml
 
-      - name: Verify Build Artifacts
+      - name: Prepare Distribution Files
         run: |
-          ls -lh geomotd-paper/target/*.jar
-          ls -lh geomotd-velocity/target/*.jar
-          ls -lh geomotd-bungee/target/*.jar
+          mkdir -p dist
+          # Copiar JARs con nombre estático y versionado
+          cp geomotd-paper/target/GeoMOTD-Paper-*.jar dist/
+          cp geomotd-velocity/target/GeoMOTD-Velocity-*.jar dist/
+          cp geomotd-bungee/target/GeoMOTD-Bungee-*.jar dist/
+          
+          # Copias fijas para loaders específicos
+          cp $(ls geomotd-paper/target/GeoMOTD-Paper-*.jar | head -n 1) dist/GeoMOTD-Paper.jar
+          cp $(ls geomotd-velocity/target/GeoMOTD-Velocity-*.jar | head -n 1) dist/GeoMOTD-Velocity.jar
+          cp $(ls geomotd-bungee/target/GeoMOTD-Bungee-*.jar | head -n 1) dist/GeoMOTD-Bungee.jar
 
-      - name: Upload Build Artifacts (Actions Download)
+          # Empaquetar bundle ZIP
+          cd dist
+          zip -r ../GeoMOTD-AllPlatforms.zip GeoMOTD-Paper-*.jar GeoMOTD-Velocity-*.jar GeoMOTD-Bungee-*.jar
+          cd ..
+          ls -lh dist/ GeoMOTD-AllPlatforms.zip
+
+      - name: Upload Build Artifacts (Actions Storage)
         uses: actions/upload-artifact@v4
         with:
           name: GeoMOTD-All-Platforms
           path: |
-            geomotd-paper/target/GeoMOTD-Paper-*.jar
-            geomotd-velocity/target/GeoMOTD-Velocity-*.jar
-            geomotd-bungee/target/GeoMOTD-Bungee-*.jar
+            dist/*.jar
+            GeoMOTD-AllPlatforms.zip
           if-no-files-found: error
           retention-days: 90
 
-      - name: Publish GitHub Release (On Version Tag)
+      # -----------------------------------------------------------------
+      # 1. GitHub Releases (Se activa automáticamente al hacer push de un tag v*)
+      # -----------------------------------------------------------------
+      - name: Publish GitHub Release
         if: startsWith(github.ref, 'refs/tags/v')
         uses: softprops/action-gh-release@v2
         with:
@@ -56,6 +71,80 @@ jobs:
           prerelease: false
           generate_release_notes: true
           files: |
-            geomotd-paper/target/GeoMOTD-Paper-*.jar
-            geomotd-velocity/target/GeoMOTD-Velocity-*.jar
-            geomotd-bungee/target/GeoMOTD-Bungee-*.jar
+            dist/GeoMOTD-Paper-*.jar
+            dist/GeoMOTD-Velocity-*.jar
+            dist/GeoMOTD-Bungee-*.jar
+            GeoMOTD-AllPlatforms.zip
+
+      # -----------------------------------------------------------------
+      # 2. Modrinth Auto-Publish (Se activa si agregas el secret MODRINTH_TOKEN)
+      # -----------------------------------------------------------------
+      - name: Publish to Modrinth
+        if: startsWith(github.ref, 'refs/tags/v') && env.MODRINTH_TOKEN != ''
+        uses: modrinth/minotaur@v2
+        env:
+          MODRINTH_TOKEN: ${{ secrets.MODRINTH_TOKEN }}
+        with:
+          token: ${{ secrets.MODRINTH_TOKEN }}
+          project-id: geomotd
+          version-name: "GeoMOTD ${{ github.ref_name }}"
+          version-number: ${{ github.ref_name }}
+          version-type: release
+          files: |
+            dist/GeoMOTD-Paper.jar
+            dist/GeoMOTD-Velocity.jar
+            dist/GeoMOTD-Bungee.jar
+          loaders: |
+            paper
+            folia
+            purpur
+            spigot
+            bukkit
+            velocity
+            waterfall
+            bungeecord
+          game-versions: |
+            1.20
+            1.20.1
+            1.20.2
+            1.20.4
+            1.20.6
+            1.21
+            1.21.1
+            1.21.2
+            1.21.3
+            1.21.4
+            26.1
+            26.2
+            26.3
+          changelog: "Release ${{ github.ref_name }} - See GitHub Releases for full details."
+
+      # -----------------------------------------------------------------
+      # 3. Hangar Auto-Publish (Se activa si agregas el secret HANGAR_TOKEN)
+      # -----------------------------------------------------------------
+      - name: Publish to Hangar
+        if: startsWith(github.ref, 'refs/tags/v') && env.HANGAR_TOKEN != ''
+        uses: benwoo1110/hangar-upload-action@v1
+        env:
+          HANGAR_TOKEN: ${{ secrets.HANGAR_TOKEN }}
+        with:
+          api_token: ${{ secrets.HANGAR_TOKEN }}
+          slug: 'GeoMOTD'
+          version: ${{ github.ref_name }}
+          channel: 'Release'
+          description: "Release ${{ github.ref_name }} - Check GitHub release notes for changelog."
+          files: |
+            [
+              {
+                "path": "dist/GeoMOTD-Paper.jar",
+                "platforms": ["PAPER"]
+              },
+              {
+                "path": "dist/GeoMOTD-Velocity.jar",
+                "platforms": ["VELOCITY"]
+              },
+              {
+                "path": "dist/GeoMOTD-Bungee.jar",
+                "platforms": ["WATERFALL"]
+              }
+            ]
